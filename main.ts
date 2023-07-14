@@ -1,6 +1,6 @@
 let drehzahl = 0
-let Programm = 0
 let Auswahl = 0
+let Programm = 0
 pins.servoWritePin(AnalogPin.C16, 0)
 basic.showLeds(`
     # # # # #
@@ -9,32 +9,25 @@ basic.showLeds(`
     # # # # #
     # # # # #
     `)
+basic.pause(500)
+basic.clearScreen()
 basic.forever(function () {
-    if (pins.digitalReadPin(DigitalPin.P2) == 1) {
-        basic.showIcon(IconNames.Asleep)
-        basic.setLedColor(0xff0000)
-    }
-    if (input.buttonIsPressed(Button.B)) {
-        Auswahl += 1
-        basic.pause(500)
-    }
-    if (input.buttonIsPressed(Button.A)) {
-        Auswahl += -1
-        basic.pause(1000)
-    }
-    if (Auswahl == -1) {
-        Auswahl = 0
-    }
-})
-basic.forever(function () {
-    while (Auswahl == 0) {
-        basic.showLeds(`
-            . . . . .
-            . . . . .
-            . . # . .
-            . . . . .
-            . . . . .
-            `)
+    while (Programm == 0) {
+        if (pins.digitalReadPin(DigitalPin.P2) == 1) {
+            basic.showIcon(IconNames.Asleep)
+            basic.setLedColor(0xff0000)
+        }
+        if (input.buttonIsPressed(Button.B)) {
+            Auswahl += 1
+            basic.pause(500)
+        }
+        if (input.buttonIsPressed(Button.A)) {
+            Auswahl += -1
+            basic.pause(1000)
+        }
+        if (Auswahl == -1) {
+            Auswahl = 0
+        }
     }
 })
 basic.forever(function () {
@@ -55,9 +48,9 @@ basic.forever(function () {
         if (input.buttonIsPressed(Button.AB)) {
             basic.showIcon(IconNames.Yes)
             basic.pause(1000)
-            Auswahl = 0
-            basic.pause(100)
             Programm = 2
+            basic.pause(100)
+            Auswahl = 0
         }
     }
 })
@@ -67,29 +60,33 @@ basic.forever(function () {
         if (input.buttonIsPressed(Button.AB)) {
             basic.showIcon(IconNames.Yes)
             basic.pause(1000)
-            Auswahl = 0
-            basic.pause(100)
             Programm = 3
+            basic.pause(100)
+            Auswahl = 0
         }
     }
 })
 basic.forever(function () {
-    while (Programm == 2) {
-        basic.showIcon(IconNames.No)
-        music.playTone(294, music.beat(BeatFraction.Quarter))
-        Programm = 0
-        Auswahl = 0
+    while (Auswahl == 4) {
+        basic.showNumber(4)
+        if (input.buttonIsPressed(Button.AB)) {
+            basic.showIcon(IconNames.Yes)
+            basic.pause(1000)
+            Programm = 4
+            basic.pause(100)
+            Auswahl = 0
+        }
     }
 })
 basic.forever(function () {
-    basic.showLeds(`
-        . . . . .
-        . . . . .
-        . . . . .
-        . . . . .
-        . . . . .
-        `)
     while (Programm == 1) {
+        basic.pause(432000000)
+        pins.servoWritePin(AnalogPin.C16, 45)
+    }
+})
+basic.forever(function () {
+    while (Programm == 1) {
+        basic.clearScreen()
         drehzahl += pins.analogReadPin(AnalogPin.P1)
         if (pins.digitalReadPin(DigitalPin.P0) == 1 || pins.digitalReadPin(DigitalPin.P2) == 1) {
             basic.setLedColor(0xff0000)
@@ -172,16 +169,50 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
-    while (Programm == 1) {
-        basic.pause(432000000)
-        pins.servoWritePin(AnalogPin.C16, 45)
+    while (Programm == 2) {
+        basic.clearScreen()
+        if (input.buttonIsPressed(Button.A)) {
+            basic.pause(3000)
+            music.playTone(262, music.beat(BeatFraction.Whole))
+            basic.setLedColor(0xff0000)
+            basic.showIcon(IconNames.No)
+            basic.turnRgbLedOff()
+        }
+    }
+})
+basic.forever(function () {
+    while (Programm == 3) {
+        if (input.buttonIsPressed(Button.AB)) {
+            storage.putNumber(StorageSlots.s1, randint(0, 100))
+            storage.putNumber(StorageSlots.s2, randint(0, 100))
+            basic.showString("Achtung")
+            if (storage.getNumber(StorageSlots.s1) > storage.getNumber(StorageSlots.s2)) {
+                basic.showString("A")
+                storage.removeNumber(StorageSlots.s1)
+                storage.removeNumber(StorageSlots.s2)
+                basic.pause(100)
+            } else if (storage.getNumber(StorageSlots.s1) < storage.getNumber(StorageSlots.s2)) {
+                basic.showString("B")
+                storage.removeNumber(StorageSlots.s1)
+                storage.removeNumber(StorageSlots.s2)
+                basic.pause(100)
+            } else if (storage.getNumber(StorageSlots.s1) == storage.getNumber(StorageSlots.s2)) {
+                basic.showString("-")
+                storage.removeNumber(StorageSlots.s1)
+                storage.removeNumber(StorageSlots.s2)
+                basic.pause(100)
+            } else {
+                basic.showString("!")
+                storage.removeNumber(StorageSlots.s1)
+                storage.removeNumber(StorageSlots.s2)
+                basic.pause(100)
+            }
+            basic.pause(1000)
+        }
     }
 })
 basic.forever(function () {
     while (Programm == 4) {
-        basic.showIcon(IconNames.No)
-        music.playTone(294, music.beat(BeatFraction.Quarter))
-        Programm = 0
-        Auswahl = 0
+        basic.clearScreen()
     }
 })

@@ -2,7 +2,10 @@
     "name": "alles",
     "description": "",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "servo": "*",
+        "radio": "*",
+        "radio-broadcast": "*"
     },
     "files": [
         "main.blocks",
@@ -13,7 +16,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "4.0.29",
+        "target": "4.0.35",
         "targetId": "calliopemini"
     },
     "supportedTargets": [
